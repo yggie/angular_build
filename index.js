@@ -38,14 +38,14 @@ module.exports = function(gulp){
   gulp.task('watch', function() {
     gulp.watch(config.files.js.app, ['build-app-js']);
     gulp.watch(config.files.html.app, ['build-app-html']);
-    livereload.listen();
+    livereload.listen({
+      quiet: true
+    });
   });
 
   gulp.task('build-app-js', function(){
     var stream = gulp.src(config.files.js.app)
-      .pipe(debug({title: 'The application javascript files'}))
       .pipe(concat('application.js'))
-      .pipe(debug({title: 'The concated application javascript files'}))
       .pipe(gulp.dest('./build/'))
       .pipe(livereload());
     return stream;
@@ -53,7 +53,6 @@ module.exports = function(gulp){
 
   gulp.task('build-app-html', function(){
     var stream = gulp.src(config.files.html.app)
-      .pipe(debug({title: 'The application html files'}))
       .pipe(gulp.dest('./build/'))
       .pipe(livereload());
     return stream;
@@ -69,9 +68,8 @@ module.exports = function(gulp){
 
   gulp.task('build-vendor', function() {
     var stream = gulp.src(mainBowerFiles())
-      .pipe(debug({title: 'The bower vendor files'}))
+      .pipe(debug({title: 'Vendor Files:'}))
       .pipe(concat('vendor.js'))
-      .pipe(debug({title: 'The concated vendor files'}))
       .pipe(gulp.dest('./build/'))
       .pipe(livereload());
     return stream;
@@ -79,9 +77,7 @@ module.exports = function(gulp){
 
   gulp.task('build-vendor-dev', function() {
     var stream = gulp.src(mainBowerFiles({includeDev: true}))
-      .pipe(debug({title: 'The bower vendor files'}))
       .pipe(concat('vendor.js'))
-      .pipe(debug({title: 'The concated vendor files'}))
       .pipe(gulp.dest('./build/'))
       .pipe(livereload());
     return stream;
