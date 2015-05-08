@@ -2,6 +2,7 @@ var gulp = require('gulp');
 var debug = require('gulp-debug');
 var del = require('del');
 
+var webserver = require('gulp-webserver');
 var mainBowerFiles = require('main-bower-files');
 var concat = require('gulp-concat');
 var bower = require('gulp-bower');
@@ -19,6 +20,14 @@ module.exports = function(gulp){
       }
     }
   };
+
+  gulp.task('webserver', ['watch'], function(){
+    gulp.src('build')
+      .pipe(webserver({
+        host: '0.0.0.0',
+        port: 8000
+      }));
+  });
 
   gulp.task('angular-build', [
     'build-vendor', 'build-app-js', 'build-app-html','build-app-templates', 'build-app-less'
