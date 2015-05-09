@@ -3,6 +3,7 @@ var debug = require('gulp-debug');
 var del = require('del');
 
 var webserver = require('gulp-webserver');
+var watch = require('gulp-watch');
 var mainBowerFiles = require('main-bower-files');
 var concat = require('gulp-concat');
 var bower = require('gulp-bower');
@@ -21,7 +22,7 @@ module.exports = function(gulp){
     }
   };
 
-  gulp.task('webserver', ['watch'], function(){
+  gulp.task('webserver', ['angular-build', 'watch'], function(){
     gulp.src('build')
       .pipe(webserver({
         host: '0.0.0.0',
@@ -36,26 +37,46 @@ module.exports = function(gulp){
   });
 
   gulp.task('watch', function() {
-    gulp.watch(config.files.js.app, ['build-app-js']);
-    gulp.watch(config.files.html.app, ['build-app-html']);
+    watch(config.files.js.app, {
+      verbose: true
+    },
+    function(vinyl){
+      buildApplicationJavascript();
+    });
+
+    watch(config.files.html.app, {
+      verbose: true
+    },
+    function(vinyl){
+      buildApplicationHtml();
+    });
+
     livereload.listen({
       quiet: true
     });
   });
 
-  gulp.task('build-app-js', function(){
+  function buildApplicationJavascript(){
     var stream = gulp.src(config.files.js.app)
       .pipe(concat('application.js'))
       .pipe(gulp.dest('./build/'))
       .pipe(livereload());
     return stream;
+  }
+
+  gulp.task('build-app-js', function(){
+    return buildApplicationJavascript();
   });
 
-  gulp.task('build-app-html', function(){
+  function buildApplicationHtml (argument) {
     var stream = gulp.src(config.files.html.app)
       .pipe(gulp.dest('./build/'))
       .pipe(livereload());
     return stream;
+  }
+
+  gulp.task('build-app-html', function(){
+    return buildApplicationHtml();
   });
 
   gulp.task('build-app-templates', function(){
