@@ -8,16 +8,21 @@ var mainBowerFiles = require('main-bower-files');
 var concat = require('gulp-concat');
 var bower = require('gulp-bower');
 var livereload = require('gulp-livereload');
+var templateCache = require('gulp-angular-templatecache');
 
 module.exports = function(gulp){
 
   var config = {
+    build_dir: './build/',
     files: {
       js: {
         app: ['src/**/*.js']
       },
       html: {
-        app: ['src/**/*.html']
+        app: ['!src/**/*.tpl.html', 'src/**/*.html']
+      },
+      templates: {
+        app: ['src/**/*.tpl.html']
       }
     }
   };
@@ -51,6 +56,13 @@ module.exports = function(gulp){
       buildApplicationHtml();
     });
 
+    watch(config.files.templates.app, {
+      verbose: true
+    },
+    function(vinyl){
+      buildApplicationTemplates();
+    });
+
     livereload.listen({
       quiet: true
     });
@@ -59,7 +71,7 @@ module.exports = function(gulp){
   function buildApplicationJavascript(){
     var stream = gulp.src(config.files.js.app)
       .pipe(concat('application.js'))
-      .pipe(gulp.dest('./build/'))
+      .pipe(gulp.dest(config.build_dir))
       .pipe(livereload());
     return stream;
   }
@@ -68,9 +80,9 @@ module.exports = function(gulp){
     return buildApplicationJavascript();
   });
 
-  function buildApplicationHtml (argument) {
+  function buildApplicationHtml () {
     var stream = gulp.src(config.files.html.app)
-      .pipe(gulp.dest('./build/'))
+      .pipe(gulp.dest(config.build_dir))
       .pipe(livereload());
     return stream;
   }
@@ -79,8 +91,18 @@ module.exports = function(gulp){
     return buildApplicationHtml();
   });
 
-  gulp.task('build-app-templates', function(){
+  function buildApplicationTemplates(){
+     var stream = gulp.src(config.files.templates.app)
+        .pipe(templateCache('templates.js', {
+          standalone: true
+        }))
+        .pipe(gulp.dest(config.build_dir))
+        .pipe(livereload());
+      return stream;
+  };
 
+  gulp.task('build-app-templates', function(){
+    return buildApplicationTemplates();
   });
 
   gulp.task('build-app-less', function(){
@@ -91,7 +113,7 @@ module.exports = function(gulp){
     var stream = gulp.src(mainBowerFiles())
       .pipe(debug({title: 'Vendor Files:'}))
       .pipe(concat('vendor.js'))
-      .pipe(gulp.dest('./build/'))
+      .pipe(gulp.dest(config.build_dir))
       .pipe(livereload());
     return stream;
   });
@@ -99,7 +121,7 @@ module.exports = function(gulp){
   gulp.task('build-vendor-dev', function() {
     var stream = gulp.src(mainBowerFiles({includeDev: true}))
       .pipe(concat('vendor.js'))
-      .pipe(gulp.dest('./build/'))
+      .pipe(gulp.dest(config.build_dir))
       .pipe(livereload());
     return stream;
   });
@@ -109,6 +131,6 @@ module.exports = function(gulp){
   });
 
   gulp.task('clean', function(cb) {
-    del(['./build'], cb);
+    del([config.build_dir], cb);
   });
 };
