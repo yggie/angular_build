@@ -19,7 +19,7 @@ module.exports = function(gulp){
         app: ['src/**/*.js']
       },
       html: {
-        app: ['!src/**/*.tpl.html', 'src/**/*.html']
+        app: ['src/**/*.html', '!src/**/*.tpl.html']
       },
       templates: {
         app: ['src/**/*.tpl.html']
