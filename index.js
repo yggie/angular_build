@@ -9,6 +9,7 @@ var concat = require('gulp-concat');
 var bower = require('gulp-bower');
 var livereload = require('gulp-livereload');
 var templateCache = require('gulp-angular-templatecache');
+var cachebreaker = require('gulp-cache-breaker');
 
 module.exports = function(gulp){
 
@@ -82,6 +83,8 @@ module.exports = function(gulp){
 
   function buildApplicationHtml () {
     var stream = gulp.src(config.files.html.app)
+      .pipe(gulp.dest(config.build_dir))
+      .pipe(cachebreaker(config.build_dir))
       .pipe(gulp.dest(config.build_dir))
       .pipe(livereload());
     return stream;
