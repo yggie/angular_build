@@ -10,6 +10,7 @@ var bower = require('gulp-bower');
 var livereload = require('gulp-livereload');
 var templateCache = require('gulp-angular-templatecache');
 var cachebreaker = require('gulp-cache-breaker');
+var jshint = require('gulp-jshint');
 
 module.exports = function(gulp){
 
@@ -71,6 +72,8 @@ module.exports = function(gulp){
 
   function buildApplicationJavascript(){
     var stream = gulp.src(config.files.js.app)
+      .pipe(jshint())
+      .pipe(jshint.reporter('default'))
       .pipe(concat('application.js'))
       .pipe(gulp.dest(config.build_dir))
       .pipe(livereload());
