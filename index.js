@@ -43,6 +43,12 @@ module.exports = function(gulp){
 
   });
 
+  gulp.task('angular-build-spec', [
+    'build-vendor-spec', 'build-app-js', 'build-app-html','build-app-templates', 'build-app-less'
+    ], function(){
+
+  });
+
   gulp.task('watch', function() {
     watch(config.files.js.app, {
       verbose: true
@@ -70,9 +76,9 @@ module.exports = function(gulp){
     });
   });
 
-  gulp.task('spec', ['angular-build'], function() {
+  gulp.task('spec', ['angular-build-spec'], function() {
     var stream = gulp.src([
-        'build/vendor.js',
+        'build/vendor-spec.js',
         'build/templates.js',
         'build/application.js',
         'src/**/*.spec.js',
@@ -142,9 +148,10 @@ module.exports = function(gulp){
     return stream;
   });
 
-  gulp.task('build-vendor-dev', function() {
+  gulp.task('build-vendor-spec', function() {
     var stream = gulp.src(mainBowerFiles({includeDev: true}))
-      .pipe(concat('vendor.js'))
+      .pipe(debug({title: 'Vendor Files:'}))
+      .pipe(concat('vendor-spec.js'))
       .pipe(gulp.dest(config.build_dir))
       .pipe(livereload());
     return stream;
