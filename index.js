@@ -11,6 +11,7 @@ var livereload = require('gulp-livereload');
 var templateCache = require('gulp-angular-templatecache');
 var cachebreaker = require('gulp-cache-breaker');
 var jshint = require('gulp-jshint');
+var karma = require('gulp-karma');
 
 module.exports = function(gulp){
 
@@ -18,13 +19,12 @@ module.exports = function(gulp){
     build_dir: './build/',
     files: {
       js: {
-        app: ['src/**/*.js']
+        app: ['src/**/*.js', '!src/**/*.spec.js'],
+        spec: 'src/**/*.spec.js',
+        templates: 'src/**/*.tpl.html'
       },
       html: {
         app: ['src/**/*.html', '!src/**/*.tpl.html']
-      },
-      templates: {
-        app: ['src/**/*.tpl.html']
       }
     }
   };
@@ -58,7 +58,7 @@ module.exports = function(gulp){
       buildApplicationHtml();
     });
 
-    watch(config.files.templates.app, {
+    watch(config.files.js.templates, {
       verbose: true
     },
     function(vinyl){
@@ -68,6 +68,24 @@ module.exports = function(gulp){
     livereload.listen({
       quiet: true
     });
+  });
+
+  gulp.task('spec', ['angular-build'], function() {
+    var stream = gulp.src([
+        'build/vendor.js',
+        'build/templates.js',
+        'build/application.js',
+        'src/**/*.spec.js',
+      ])
+      .pipe(karma({
+        configFile: 'karma.conf.js',
+        action: 'run'
+      }))
+      .on('error', function(err) {
+        // Make sure failed tests cause gulp to exit non-zero
+        throw err;
+      });
+    return stream;
   });
 
   function buildApplicationJavascript(){
@@ -98,13 +116,13 @@ module.exports = function(gulp){
   });
 
   function buildApplicationTemplates(){
-     var stream = gulp.src(config.files.templates.app)
-        .pipe(templateCache('templates.js', {
-          standalone: true
-        }))
-        .pipe(gulp.dest(config.build_dir))
-        .pipe(livereload());
-      return stream;
+    var stream = gulp.src(config.files.js.templates)
+      .pipe(templateCache('templates.js', {
+        standalone: true
+      }))
+      .pipe(gulp.dest(config.build_dir))
+      .pipe(livereload());
+    return stream;
   };
 
   gulp.task('build-app-templates', function(){
