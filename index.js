@@ -12,6 +12,7 @@ var templateCache = require('gulp-angular-templatecache');
 var cachebreaker = require('gulp-cache-breaker');
 var jshint = require('gulp-jshint');
 var karma = require('gulp-karma');
+var sass = require('gulp-sass');
 
 module.exports = function(gulp){
 
@@ -25,6 +26,9 @@ module.exports = function(gulp){
       },
       static_assets: {
         app: ['src/**/*.html', '!src/**/*.tpl.html', 'src/**/*.json']
+      },
+      css : {
+        app: 'src/**/*.scss'
       }
     }
   };
@@ -38,13 +42,13 @@ module.exports = function(gulp){
   });
 
   gulp.task('angular-build', [
-    'build-vendor', 'build-app-js', 'build-app-static-assets','build-app-templates', 'build-app-less'
+    'build-vendor', 'build-app-js', 'build-app-static-assets','build-app-templates', 'build-app-sass'
     ], function(){
 
   });
 
   gulp.task('angular-build-spec', [
-    'build-vendor-spec', 'build-app-js', 'build-app-static-assets','build-app-templates', 'build-app-less'
+    'build-vendor-spec', 'build-app-js', 'build-app-static-assets','build-app-templates', 'build-app-sass'
     ], function(){
 
   });
@@ -55,6 +59,13 @@ module.exports = function(gulp){
     },
     function(vinyl){
       buildApplicationJavascript();
+    });
+
+    watch(config.files.css.app, {
+      verbose: true
+    },
+    function(vinyl){
+      buildApplicationCSS();
     });
 
     watch(config.files.static_assets.app, {
@@ -81,7 +92,8 @@ module.exports = function(gulp){
         'build/vendor-spec.js',
         'build/templates.js',
         'build/application.js',
-        'src/**/*.spec.js',
+        'build/application.css',
+        'src/**/*.spec.js'
       ])
       .pipe(karma({
         configFile: 'karma.conf.js',
@@ -135,8 +147,17 @@ module.exports = function(gulp){
     return buildApplicationTemplates();
   });
 
-  gulp.task('build-app-less', function(){
+  function buildApplicationCSS(){
+    var stream = gulp.src(config.files.css.app)
+      .pipe(sass())
+      .pipe(concat('application.css'))
+      .pipe(gulp.dest(config.build_dir))
+      .pipe(livereload());
+    return stream;
+  };
 
+  gulp.task('build-app-sass', function(){
+    return buildApplicationCSS();
   });
 
   gulp.task('build-vendor', function() {
