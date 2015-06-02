@@ -23,8 +23,8 @@ module.exports = function(gulp){
         spec: 'src/**/*.spec.js',
         templates: 'src/**/*.tpl.html'
       },
-      html: {
-        app: ['src/**/*.html', '!src/**/*.tpl.html']
+      static_assets: {
+        app: ['src/**/*.html', '!src/**/*.tpl.html', 'src/**/*.json']
       }
     }
   };
@@ -38,13 +38,13 @@ module.exports = function(gulp){
   });
 
   gulp.task('angular-build', [
-    'build-vendor', 'build-app-js', 'build-app-html','build-app-templates', 'build-app-less'
+    'build-vendor', 'build-app-js', 'build-app-static-assets','build-app-templates', 'build-app-less'
     ], function(){
 
   });
 
   gulp.task('angular-build-spec', [
-    'build-vendor-spec', 'build-app-js', 'build-app-html','build-app-templates', 'build-app-less'
+    'build-vendor-spec', 'build-app-js', 'build-app-static-assets','build-app-templates', 'build-app-less'
     ], function(){
 
   });
@@ -57,11 +57,11 @@ module.exports = function(gulp){
       buildApplicationJavascript();
     });
 
-    watch(config.files.html.app, {
+    watch(config.files.static_assets.app, {
       verbose: true
     },
     function(vinyl){
-      buildApplicationHtml();
+      buildApplicationStaticAssets();
     });
 
     watch(config.files.js.templates, {
@@ -108,8 +108,8 @@ module.exports = function(gulp){
     return buildApplicationJavascript();
   });
 
-  function buildApplicationHtml () {
-    var stream = gulp.src(config.files.html.app)
+  function buildApplicationStaticAssets () {
+    var stream = gulp.src(config.files.static_assets.app)
       .pipe(gulp.dest(config.build_dir))
       .pipe(cachebreaker(config.build_dir))
       .pipe(gulp.dest(config.build_dir))
@@ -117,8 +117,8 @@ module.exports = function(gulp){
     return stream;
   }
 
-  gulp.task('build-app-html', function(){
-    return buildApplicationHtml();
+  gulp.task('build-app-static-assets', function(){
+    return buildApplicationStaticAssets();
   });
 
   function buildApplicationTemplates(){
