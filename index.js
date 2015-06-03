@@ -22,7 +22,8 @@ module.exports = function(gulp){
       js: {
         app: ['src/**/*.js', '!src/**/*.spec.js'],
         spec: 'src/**/*.spec.js',
-        templates: 'src/**/*.tpl.html'
+        templates: 'src/**/*.tpl.html',
+        test: [ 'build/vendor-spec.js', 'build/templates.js','src/**/*.js', 'src/**/*.spec.js']
       },
       static_assets: {
         app: ['src/**/*.html', '!src/**/*.tpl.html', 'src/**/*.json']
@@ -87,12 +88,19 @@ module.exports = function(gulp){
     });
   });
 
-  gulp.task('spec', ['angular-build-spec'], function() {
+  gulp.task('karma-watch', function() {
+    gulp.src(config.files.js.test)
+      .pipe(karma({
+        configFile: 'karma.conf.js',
+        action: 'watch'
+      }));
+  });
+
+  gulp.task('karma', ['angular-build-spec'], function() {
     var stream = gulp.src([
         'build/vendor-spec.js',
         'build/templates.js',
         'build/application.js',
-        'build/application.css',
         'src/**/*.spec.js'
       ])
       .pipe(karma({
