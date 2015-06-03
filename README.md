@@ -2,7 +2,7 @@
 A build process for AngularJS projects using Gulp
 
 
-###Setup 
+###Setup
 Add angular_build to your dependencies via github as it's not a registered npm module yet.
 ```
 "dependencies": {
@@ -35,9 +35,14 @@ To run a full build
 gulp angular-build
 ```
 
-To run tests
+To run karma
 ```
-gulp spec
+gulp karma
+```
+
+To run karma watch
+```
+gulp karma-watch
 ```
 
 To run a built-in webserver which watches for changes and triggers a live-reload
