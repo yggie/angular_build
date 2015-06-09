@@ -23,10 +23,18 @@ module.exports = function(gulp){
         app: ['src/**/*.js', '!src/**/*.spec.js'],
         spec: 'src/**/*.spec.js',
         templates: 'src/**/*.tpl.html',
-        test: [ 'build/vendor-spec.js', 'build/templates.js','src/**/*.js', 'src/**/*.spec.js']
+        test: [
+          'build/vendor-spec.js',
+          'build/templates.js',
+          'src/**/*.js', 
+          'src/**/*.spec.js'
+        ]
       },
       static_assets: {
-        app: ['src/**/*.html', '!src/**/*.tpl.html', 'src/**/*.json']
+        app: [
+          'src/**/*.html', 
+          '!src/**/*.tpl.html', 
+          'src/**/*.json']
       },
       css : {
         app: 'src/**/*.scss'
@@ -149,7 +157,7 @@ module.exports = function(gulp){
       .pipe(gulp.dest(config.build_dir))
       .pipe(livereload());
     return stream;
-  };
+  }
 
   gulp.task('build-app-templates', function(){
     return buildApplicationTemplates();
@@ -157,12 +165,11 @@ module.exports = function(gulp){
 
   function buildApplicationCSS(){
     var stream = gulp.src(config.files.css.app)
-      .pipe(sass())
-      .pipe(concat('application.css'))
-      .pipe(gulp.dest(config.build_dir))
-      .pipe(livereload());
+    .pipe(sass({ outputStyle: 'compressed' }))
+    .pipe(gulp.dest(config.build_dir))
+    .pipe(livereload());
     return stream;
-  };
+  }
 
   gulp.task('build-app-sass', function(){
     return buildApplicationCSS();
