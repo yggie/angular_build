@@ -26,15 +26,21 @@ module.exports = function(gulp){
         test: [
           'build/vendor-spec.js',
           'build/templates.js',
-          'src/**/*.js', 
+          'src/**/*.js',
           'src/**/*.spec.js'
         ]
       },
       static_assets: {
         app: [
-          'src/**/*.html', 
-          '!src/**/*.tpl.html', 
-          'src/**/*.json']
+          'src/assets/**/*'
+        ]
+      },
+      static_files: {
+        app: [
+          'src/**/*.html',
+          '!src/**/*.tpl.html',
+          'src/**/*.json'
+        ]
       },
       css : {
         app: 'src/**/*.scss'
@@ -51,13 +57,13 @@ module.exports = function(gulp){
   });
 
   gulp.task('angular-build', [
-    'build-vendor', 'build-app-js', 'build-app-static-assets','build-app-templates', 'build-app-sass'
+    'build-vendor', 'build-app-js', 'build-app-static-assets', 'build-app-static-files','build-app-templates', 'build-app-sass'
     ], function(){
 
   });
 
   gulp.task('angular-build-spec', [
-    'build-vendor-spec', 'build-app-js', 'build-app-static-assets','build-app-templates', 'build-app-sass'
+    'build-vendor-spec', 'build-app-js', 'build-app-static-assets', 'build-app-static-files','build-app-templates', 'build-app-sass'
     ], function(){
 
   });
@@ -82,6 +88,13 @@ module.exports = function(gulp){
     },
     function(vinyl){
       buildApplicationStaticAssets();
+    });
+
+    watch(config.files.static_files.app, {
+      verbose: true
+    },
+    function(vinyl){
+      buildApplicationStaticFiles();
     });
 
     watch(config.files.js.templates, {
@@ -136,14 +149,25 @@ module.exports = function(gulp){
     return buildApplicationJavascript();
   });
 
-  function buildApplicationStaticAssets () {
-    var stream = gulp.src(config.files.static_assets.app)
+  function buildApplicationStaticFiles () {
+    var stream = gulp.src(config.files.static_files.app)
       .pipe(gulp.dest(config.build_dir))
       .pipe(cachebreaker(config.build_dir))
       .pipe(gulp.dest(config.build_dir))
       .pipe(livereload());
     return stream;
-  }
+  };
+
+  gulp.task('build-app-static-files', function(){
+    return buildApplicationStaticFiles();
+  });
+
+  function buildApplicationStaticAssets () {
+    var stream = gulp.src(config.files.static_assets.app)
+      .pipe(gulp.dest(config.build_dir + 'assets/'))
+      .pipe(livereload());
+    return stream;
+  };
 
   gulp.task('build-app-static-assets', function(){
     return buildApplicationStaticAssets();
