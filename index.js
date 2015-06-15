@@ -139,7 +139,6 @@ module.exports = function(gulp) {
     var stream = gulp.src(config.files.js.app)
       .pipe(eslint())
       .pipe(eslint.format())
-      .pipe(eslint.failOnError())
       .pipe(concat('application.js'))
       .pipe(gulp.dest(config.build_dir))
       .pipe(livereload());
