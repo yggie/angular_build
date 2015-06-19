@@ -11,13 +11,11 @@
   "dependencies": {
     "del": "^1.1.1",
     "gulp": "^3.8.11",
-    "gulp-angular-templatecache": "^1.6.0",
     "gulp-bower": "0.0.10",
     "gulp-cache-breaker": "0.0.3",
     "gulp-concat": "^2.5.2",
     "gulp-debug": "^2.0.1",
     "gulp-eslint": "^0.13.2",
-    "gulp-karma": "0.0.4",
     "gulp-livereload": "^3.8.0",
     "gulp-sass": "^2.0.1",
     "gulp-watch": "^4.2.4",

@@ -8,10 +8,8 @@ var mainBowerFiles = require('main-bower-files');
 var concat = require('gulp-concat');
 var bower = require('gulp-bower');
 var livereload = require('gulp-livereload');
-var templateCache = require('gulp-angular-templatecache');
 var cachebreaker = require('gulp-cache-breaker');
 var eslint = require('gulp-eslint');
-var karma = require('gulp-karma');
 var sass = require('gulp-sass');
 
 module.exports = function(gulp) {
@@ -22,7 +20,6 @@ module.exports = function(gulp) {
       js: {
         app: ['src/**/*.js', '!src/**/*.spec.js'],
         spec: 'src/**/*.spec.js',
-        templates: 'src/**/*.tpl.html',
         test: [
           'build/vendor-spec.js',
           'build/templates.js',
@@ -57,13 +54,13 @@ module.exports = function(gulp) {
   });
 
   gulp.task('angular-build', [
-    'build-vendor', 'build-app-js', 'build-app-static-assets', 'build-app-static-files','build-app-templates', 'build-app-sass'
+    'build-vendor', 'build-app-js', 'build-app-static-assets', 'build-app-static-files', 'build-app-sass'
     ], function() {
 
   });
 
   gulp.task('angular-build-spec', [
-    'build-vendor-spec', 'build-app-js', 'build-app-static-assets', 'build-app-static-files','build-app-templates', 'build-app-sass'
+    'build-vendor-spec', 'build-app-js', 'build-app-static-assets', 'build-app-static-files', 'build-app-sass'
     ], function() {
 
   });
@@ -97,42 +94,9 @@ module.exports = function(gulp) {
       buildApplicationStaticFiles();
     });
 
-    watch(config.files.js.templates, {
-      verbose: true
-    },
-    function(vinyl) {
-      buildApplicationTemplates();
-    });
-
     livereload.listen({
       quiet: true
     });
-  });
-
-  gulp.task('karma-watch', function() {
-    gulp.src(config.files.js.test)
-      .pipe(karma({
-        configFile: 'karma.conf.js',
-        action: 'watch'
-      }));
-  });
-
-  gulp.task('karma', ['angular-build-spec'], function() {
-    var stream = gulp.src([
-        'build/vendor-spec.js',
-        'build/templates.js',
-        'build/application.js',
-        'src/**/*.spec.js'
-      ])
-      .pipe(karma({
-        configFile: 'karma.conf.js',
-        action: 'run'
-      }))
-      .on('error', function(err) {
-        // Make sure failed tests cause gulp to exit non-zero
-        throw err;
-      });
-    return stream;
   });
 
   function buildApplicationJavascript() {
@@ -173,20 +137,6 @@ module.exports = function(gulp) {
     return buildApplicationStaticAssets();
   });
 
-  function buildApplicationTemplates() {
-    var stream = gulp.src(config.files.js.templates)
-      .pipe(templateCache('templates.js', {
-        standalone: true
-      }))
-      .pipe(gulp.dest(config.build_dir))
-      .pipe(livereload());
-    return stream;
-  }
-
-  gulp.task('build-app-templates', function() {
-    return buildApplicationTemplates();
-  });
-
   function buildApplicationCSS() {
     var stream = gulp.src(config.files.css.app)
     .pipe(sass({ outputStyle: 'compressed' }))
@@ -224,4 +174,8 @@ module.exports = function(gulp) {
   gulp.task('clean', function(cb) {
     del([config.build_dir], cb);
   });
+
+  return {
+    livereload: livereload
+  }
 };
