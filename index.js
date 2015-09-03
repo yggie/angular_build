@@ -55,7 +55,7 @@ module.exports = function(gulp) {
   });
 
   gulp.task('angular-build', [
-    'build-vendor', 'build-app-js', 'build-app-static-assets', 'build-app-static-files', 'build-app-sass'
+    'build-vendor', 'build-app-js', 'build-app-static-assets', 'build-app-static-files', 'build-app-sass', 'build-vendor-css'
     ], function() {
 
   });
