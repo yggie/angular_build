@@ -16,6 +16,7 @@ module.exports = function(gulp) {
 
   var config = {
     build_dir: './build/',
+    buildCss_dir: './build/styles',
     files: {
       js: {
         app: ['src/**/*.js', '!src/**/*.spec.js'],
@@ -150,11 +151,20 @@ module.exports = function(gulp) {
   });
 
   gulp.task('build-vendor', function() {
-    var stream = gulp.src(mainBowerFiles())
-      .pipe(debug({title: 'Vendor Files:'}))
-      .pipe(concat('vendor.js'))
-      .pipe(gulp.dest(config.build_dir))
-      .pipe(livereload());
+    var stream = gulp.src(mainBowerFiles({filter: '**/*.js'}))
+        .pipe(debug({title: 'Vendor Files (JS):'}))
+        .pipe(concat('vendor.js'))
+        .pipe(gulp.dest(config.build_dir))
+        .pipe(livereload());
+    return stream;
+  });
+
+  gulp.task('build-vendor-css', function() {
+    var stream = gulp.src(mainBowerFiles({filter: '**/*.css'}))
+        .pipe(debug({title: 'Vendor Files (CSS):'}))
+        .pipe(concat('vendor.css'))
+        .pipe(gulp.dest(config.buildCss_dir))
+        .pipe(livereload());
     return stream;
   });
 
